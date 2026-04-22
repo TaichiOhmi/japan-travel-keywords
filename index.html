@@ -194,14 +194,6 @@
     background: white;
     white-space: nowrap;
   }
-  .wishlist-btn.map-btn {
-    border-color: var(--region-kanto);
-    color: var(--region-kanto);
-  }
-  .wishlist-btn.map-btn:hover {
-    background: var(--region-kanto);
-    color: white;
-  }
   .wishlist-btn.clear-btn {
     border-color: #ccc;
     color: #999;
@@ -366,20 +358,6 @@
     border-top: 1px solid var(--light);
   }
 
-  /* ── TOOLTIP ── */
-  .tooltip {
-    position: fixed;
-    background: var(--ink);
-    color: white;
-    font-size: 0.7rem;
-    padding: 0.3rem 0.6rem;
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0;
-    transition: opacity 0.15s;
-    white-space: nowrap;
-  }
-  .tooltip.show { opacity: 1; }
 </style>
 </head>
 <body>
@@ -423,8 +401,6 @@
 <div class="main" id="main"></div>
 
 <footer>© 2026 日本旅行キーワードガイド　｜　キーワードをクリックでGoogle Mapsへ　｜　＋でリストに追加</footer>
-
-<div class="tooltip" id="tooltip"></div>
 
 <script>
 // ── DATA ──
@@ -626,8 +602,9 @@ function buildUI() {
         kwEl.innerHTML = `
           <a class="kw-map" href="${mapsUrl}" target="_blank" rel="noopener" title="Google Mapsで確認">${mapPinSVG}${kw}</a>
           <span class="kw-divider"></span>
-          <button class="kw-add" title="気になるリストに追加" onclick="toggleWishlist('${kw}', '${pref.name}', this)">＋</button>
+          <button class="kw-add" title="気になるリストに追加">＋</button>
         `;
+        kwEl.querySelector('.kw-add').addEventListener('click', () => toggleWishlist(kw, pref.name));
         kwContainer.appendChild(kwEl);
       }
 
@@ -644,7 +621,7 @@ function buildUI() {
 }
 
 // ── WISHLIST ──
-function toggleWishlist(kw, pref, btn) {
+function toggleWishlist(kw, pref) {
   const exists = wishlist.findIndex(w => w.keyword === kw && w.pref === pref);
   if (exists >= 0) {
     wishlist.splice(exists, 1);
@@ -672,9 +649,13 @@ function renderWishlist() {
   items.innerHTML = wishlist.map((w, i) => `
     <span class="wishlist-item">
       <span style="color:var(--muted);font-size:0.65rem">${w.pref}</span>&nbsp;${w.keyword}
-      <button class="remove-btn" onclick="removeWishlist(${i})">×</button>
+      <button class="remove-btn" data-idx="${i}">×</button>
     </span>
   `).join('');
+  items.addEventListener('click', e => {
+    const btn = e.target.closest('.remove-btn');
+    if (btn) removeWishlist(Number(btn.dataset.idx));
+  }, { once: true });
 }
 
 function removeWishlist(i) {
