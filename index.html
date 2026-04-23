@@ -11,7 +11,6 @@
     --ink: #1a1209;
     --paper: #f5f0e8;
     --red: #c0392b;
-    --gold: #b8860b;
     --muted: #8b7355;
     --light: #e8e0d0;
     --region-tohoku: #4a7c59;
@@ -23,8 +22,6 @@
     --region-kyushu: #8a2c2c;
     --region-hokkaido: #2c4a8a;
     --region-okinawa: #2c8a7a;
-    --wishlist-bg: #fff8f0;
-    --wishlist-border: #e8c890;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -36,7 +33,6 @@
     min-height: 100vh;
   }
 
-  /* ── HEADER ── */
   header {
     background: var(--ink);
     color: var(--paper);
@@ -67,7 +63,6 @@
     position: relative;
   }
 
-  /* ── SEARCH ── */
   .search-bar {
     display: flex;
     justify-content: center;
@@ -89,7 +84,6 @@
   }
   .search-bar input:focus { border-color: var(--red); }
 
-  /* ── REGION NAV ── */
   .region-nav {
     display: flex;
     flex-wrap: wrap;
@@ -123,92 +117,6 @@
   .region-btn[data-region="九州"] { color: var(--region-kyushu); }
   .region-btn[data-region="沖縄"] { color: var(--region-okinawa); }
 
-  /* ── WISHLIST BAR ── */
-  .wishlist-bar {
-    background: var(--wishlist-bg);
-    border-bottom: 2px solid var(--wishlist-border);
-    padding: 0.7rem 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    flex-wrap: wrap;
-    min-height: 48px;
-    transition: all 0.2s;
-  }
-  .wishlist-bar.empty {
-    display: none;
-  }
-  .wishlist-label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--gold);
-    letter-spacing: 0.08em;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-  .wishlist-label svg { width: 14px; height: 14px; fill: var(--gold); }
-  .wishlist-items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-    flex: 1;
-  }
-  .wishlist-item {
-    font-size: 0.72rem;
-    background: white;
-    border: 1px solid var(--wishlist-border);
-    padding: 0.2rem 0.5rem;
-    color: var(--ink);
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    cursor: default;
-  }
-  .wishlist-item .remove-btn {
-    color: #bbb;
-    cursor: pointer;
-    font-size: 0.8rem;
-    line-height: 1;
-    transition: color 0.1s;
-    background: none;
-    border: none;
-    padding: 0;
-    font-family: inherit;
-  }
-  .wishlist-item .remove-btn:hover { color: var(--red); }
-  .wishlist-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-left: auto;
-  }
-  .wishlist-btn {
-    font-size: 0.72rem;
-    padding: 0.25rem 0.6rem;
-    border: 1.5px solid;
-    cursor: pointer;
-    font-family: 'Noto Sans JP', sans-serif;
-    font-weight: 500;
-    transition: all 0.15s;
-    background: white;
-    white-space: nowrap;
-  }
-  .wishlist-btn.clear-btn {
-    border-color: #ccc;
-    color: #999;
-  }
-  .wishlist-btn.clear-btn:hover {
-    border-color: var(--red);
-    color: var(--red);
-  }
-  .wishlist-empty-msg {
-    font-size: 0.75rem;
-    color: #bbb;
-    font-style: italic;
-  }
-
-  /* ── MAIN ── */
   .main {
     max-width: 1200px;
     margin: 0 auto;
@@ -240,7 +148,7 @@
     padding: 0.9rem 1rem;
     transition: all 0.2s;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
   }
   .prefecture-card::before {
     content: '';
@@ -287,66 +195,81 @@
     gap: 0.3rem;
   }
 
-  /* keyword: left half = Maps, right area = + wishlist */
+  /* キーワードタグ */
   .keyword {
+    position: relative;
     font-size: 0.75rem;
     background: var(--paper);
-    padding: 0;
+    padding: 0.25rem 0.55rem;
     border: 1px solid var(--light);
     color: var(--muted);
-    transition: all 0.15s;
-    display: flex;
-    align-items: stretch;
-    overflow: hidden;
     cursor: default;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+    user-select: none;
   }
   .keyword:hover {
     border-color: var(--accent-color, var(--ink));
+    color: var(--ink);
+    background: white;
+    z-index: 10;
   }
-  .kw-map {
-    padding: 0.2rem 0.45rem;
-    cursor: pointer;
-    transition: all 0.15s;
+
+  /* ホバーメニュー */
+  .kw-actions {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    display: flex;
+    gap: 2px;
+    background: var(--ink);
+    padding: 4px 5px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s, transform 0.15s;
+    z-index: 200;
+    white-space: nowrap;
+  }
+  .kw-actions::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--ink);
+  }
+  .keyword:hover .kw-actions {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .kw-action-btn {
     display: flex;
     align-items: center;
-    gap: 0.2rem;
-    color: inherit;
+    gap: 3px;
+    padding: 3px 7px;
+    font-size: 0.65rem;
+    color: #bbb;
     text-decoration: none;
-    font-size: inherit;
-    font-family: inherit;
-    background: none;
-    border: none;
+    transition: background 0.1s, color 0.1s;
+    font-family: 'Noto Sans JP', sans-serif;
+    white-space: nowrap;
+    border-radius: 1px;
   }
-  .kw-map:hover {
-    background: var(--accent-color, var(--ink));
-    color: white;
-  }
-  .kw-map svg {
-    width: 9px;
-    height: 9px;
+  .kw-action-btn:hover { background: rgba(255,255,255,0.12); color: white; }
+  .kw-action-btn svg {
+    width: 10px; height: 10px;
+    fill: currentColor;
     flex-shrink: 0;
-    opacity: 0.6;
   }
-  .kw-divider {
+
+  .kw-sep {
     width: 1px;
-    background: var(--light);
-    flex-shrink: 0;
+    background: rgba(255,255,255,0.12);
+    margin: 2px 0;
   }
-  .kw-add {
-    padding: 0.2rem 0.35rem;
-    cursor: pointer;
-    color: #ccc;
-    font-size: 0.9rem;
-    line-height: 1;
-    transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    background: none;
-    border: none;
-    font-family: inherit;
-  }
-  .kw-add:hover { color: var(--gold); background: #fff8e8; }
-  .kw-add.added { color: var(--gold); }
 
   .hidden { display: none !important; }
 
@@ -357,7 +280,6 @@
     color: var(--muted);
     border-top: 1px solid var(--light);
   }
-
 </style>
 </head>
 <body>
@@ -384,179 +306,112 @@
   <button class="region-btn" data-region="沖縄" onclick="filterRegion('沖縄', this)">沖縄</button>
 </div>
 
-<!-- WISHLIST BAR -->
-<div class="wishlist-bar empty" id="wishlistBar">
-  <div class="wishlist-label">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-    気になるリスト
-  </div>
-  <div class="wishlist-items" id="wishlistItems">
-    <span class="wishlist-empty-msg">キーワードの ＋ ボタンで追加できます</span>
-  </div>
-  <div class="wishlist-actions" id="wishlistActions" style="display:none">
-    <button class="wishlist-btn clear-btn" onclick="clearWishlist()">クリア</button>
-  </div>
-</div>
-
 <div class="main" id="main"></div>
 
-<footer>© 2026 日本旅行キーワードガイド　｜　キーワードをクリックでGoogle Mapsへ　｜　＋でリストに追加</footer>
+<footer>© 2026 日本旅行キーワードガイド　｜　キーワードにホバーするとMaps・検索・Instagramで調べられます</footer>
 
 <script>
-// ── DATA ──
 const tourismLinks = {
-  "北海道": "https://www.visit-hokkaido.jp/",
-  "青森": "https://www.aomori-tourism.com/",
-  "岩手": "https://www.iwatetabi.jp/",
-  "宮城": "https://www.miyagi-kankou.or.jp/",
-  "秋田": "https://akita-tourism.com/",
-  "山形": "https://yamagatakanko.com/",
-  "福島": "https://www.tif.ne.jp/",
-  "茨城": "https://www.ibarakiguide.jp/",
-  "栃木": "https://www.tochigiji.or.jp/",
-  "群馬": "https://www.visit-gunma.jp/",
-  "埼玉": "https://www.stib.jp/",
-  "千葉": "https://maruchiba.jp/",
-  "東京": "https://www.gotokyo.org/jp/",
-  "神奈川": "https://www.kanagawa-kankou.or.jp/",
-  "新潟": "https://niigata-kankou.or.jp/",
-  "富山": "https://www.toyama-tourism.com/",
-  "石川": "https://www.hot-ishikawa.jp/",
-  "福井": "https://www.fuku-e.com/",
-  "山梨": "https://www.yamanashi-kankou.jp/",
-  "長野": "https://www.nagano-tabi.net/",
-  "岐阜": "https://www.kankou-gifu.jp/",
-  "静岡": "https://www.visit-shizuoka.com/",
-  "愛知": "https://www.aichi-now.jp/",
-  "三重": "https://www.kankomie.or.jp/",
-  "滋賀": "https://www.biwako-visitors.jp/",
-  "京都": "https://www.kyoto.travel/",
-  "大阪": "https://osaka-info.jp/",
-  "兵庫": "https://hyogo-tourism.jp/",
-  "奈良": "https://yamatoji.nara-kankou.or.jp/",
-  "和歌山": "https://www.wakayama-kanko.or.jp/",
-  "鳥取": "https://www.tottori-tour.jp/",
-  "島根": "https://www.kankou-shimane.com/",
-  "岡山": "https://okayama-kanko.net/",
-  "広島": "https://www.hiroshima-navi.or.jp/",
-  "山口": "https://yamaguchi-tourism.jp/",
-  "徳島": "https://www.awanavi.jp/",
-  "香川": "https://www.my-kagawa.jp/",
-  "愛媛": "https://www.iyokannet.jp/",
-  "高知": "https://www.attaka.or.jp/",
-  "福岡": "https://www.crossroadfukuoka.jp/",
-  "佐賀": "https://www.asobo-saga.jp/",
-  "長崎": "https://www.nagasaki-tabinet.com/",
-  "熊本": "https://kumamoto.guide/",
-  "大分": "https://www.visit-oita.jp/",
-  "宮崎": "https://www.kanko-miyazaki.jp/",
-  "鹿児島": "https://www.kagoshima-kankou.com/",
-  "沖縄": "https://www.okinawastory.jp/"
+  "北海道":"https://www.visit-hokkaido.jp/","青森":"https://www.aomori-tourism.com/",
+  "岩手":"https://www.iwatetabi.jp/","宮城":"https://www.miyagi-kankou.or.jp/",
+  "秋田":"https://akita-tourism.com/","山形":"https://yamagatakanko.com/",
+  "福島":"https://www.tif.ne.jp/","茨城":"https://www.ibarakiguide.jp/",
+  "栃木":"https://www.tochigiji.or.jp/","群馬":"https://www.visit-gunma.jp/",
+  "埼玉":"https://www.stib.jp/","千葉":"https://maruchiba.jp/",
+  "東京":"https://www.gotokyo.org/jp/","神奈川":"https://www.kanagawa-kankou.or.jp/",
+  "新潟":"https://niigata-kankou.or.jp/","富山":"https://www.toyama-tourism.com/",
+  "石川":"https://www.hot-ishikawa.jp/","福井":"https://www.fuku-e.com/",
+  "山梨":"https://www.yamanashi-kankou.jp/","長野":"https://www.nagano-tabi.net/",
+  "岐阜":"https://www.kankou-gifu.jp/","静岡":"https://www.visit-shizuoka.com/",
+  "愛知":"https://www.aichi-now.jp/","三重":"https://www.kankomie.or.jp/",
+  "滋賀":"https://www.biwako-visitors.jp/","京都":"https://www.kyoto.travel/",
+  "大阪":"https://osaka-info.jp/","兵庫":"https://hyogo-tourism.jp/",
+  "奈良":"https://yamatoji.nara-kankou.or.jp/","和歌山":"https://www.wakayama-kanko.or.jp/",
+  "鳥取":"https://www.tottori-tour.jp/","島根":"https://www.kankou-shimane.com/",
+  "岡山":"https://okayama-kanko.net/","広島":"https://www.hiroshima-navi.or.jp/",
+  "山口":"https://yamaguchi-tourism.jp/","徳島":"https://www.awanavi.jp/",
+  "香川":"https://www.my-kagawa.jp/","愛媛":"https://www.iyokannet.jp/",
+  "高知":"https://www.attaka.or.jp/","福岡":"https://www.crossroadfukuoka.jp/",
+  "佐賀":"https://www.asobo-saga.jp/","長崎":"https://www.nagasaki-tabinet.com/",
+  "熊本":"https://kumamoto.guide/","大分":"https://www.visit-oita.jp/",
+  "宮崎":"https://www.kanko-miyazaki.jp/","鹿児島":"https://www.kagoshima-kankou.com/",
+  "沖縄":"https://www.okinawastory.jp/"
 };
 
 const data = {
-  "北海道": {
-    color: "var(--region-hokkaido)",
-    prefs: [
-      { name: "北海道", keywords: ["函館夜景", "小樽運河", "富良野ラベンダー", "知床", "札幌ラーメン", "ジンギスカン", "カニ", "スープカレー", "雪まつり", "流氷", "洞爺湖", "大雪山"] }
-    ]
-  },
-  "東北": {
-    color: "var(--region-tohoku)",
-    prefs: [
-      { name: "青森", keywords: ["白神山地", "ねぶた祭り", "マグロ", "りんご", "三内丸山遺跡", "奥入瀬渓流", "八甲田山", "ほたて"] },
-      { name: "岩手", keywords: ["平泉・中尊寺", "厳美渓", "わんこそば", "冷麺", "南部鉄器", "龍泉洞", "遠野", "前沢牛"] },
-      { name: "宮城", keywords: ["松島", "仙台七夕まつり", "牛タン", "ずんだ餅", "気仙沼フカヒレ", "秋保温泉", "蔵王キツネ村", "笹かまぼこ"] },
-      { name: "秋田", keywords: ["竿燈まつり", "なまはげ", "秋田犬", "きりたんぽ", "稲庭うどん", "田沢湖", "角館武家屋敷", "男鹿半島"] },
-      { name: "山形", keywords: ["山寺（立石寺）", "蔵王温泉・樹氷", "さくらんぼ", "芋煮", "米沢牛", "鶴岡・月山", "花笠まつり", "玉こんにゃく"] },
-      { name: "福島", keywords: ["会津若松・鶴ヶ城", "裏磐梯五色沼", "喜多方ラーメン", "福島桃", "スパリゾートハワイアンズ", "大内宿", "白虎隊", "赤べこ"] }
-    ]
-  },
-  "関東": {
-    color: "var(--region-kanto)",
-    prefs: [
-      { name: "茨城", keywords: ["袋田の滝", "偕楽園・梅", "納豆", "あんこう鍋", "筑波山", "大洗", "笠間焼", "霞ヶ浦"] },
-      { name: "栃木", keywords: ["日光東照宮", "那須高原", "いちご狩り", "宇都宮餃子", "華厳の滝", "鬼怒川温泉", "益子焼", "レモン牛乳"] },
-      { name: "群馬", keywords: ["草津温泉", "伊香保温泉", "富岡製糸場", "だるま", "水澤うどん", "谷川岳", "上毛かるた", "焼きまんじゅう"] },
-      { name: "埼玉", keywords: ["秩父", "川越小江戸", "鉄道博物館", "所沢航空発祥記念館", "行田古墳", "深谷ねぎ", "川越いも", "武蔵野うどん"] },
-      { name: "千葉", keywords: ["成田山新勝寺", "鋸山", "九十九里浜", "銚子", "房総フラワーライン", "ディズニーリゾート", "落花生", "なめろう"] },
-      { name: "東京", keywords: ["浅草・浅草寺", "渋谷スクランブル", "新宿", "上野", "六本木", "スカイツリー", "原宿・竹下通り", "豊洲市場", "築地場外", "お台場", "秋葉原"] },
-      { name: "神奈川", keywords: ["鎌倉・大仏", "横浜中華街", "箱根温泉", "江ノ島", "湘南海岸", "みなとみらい", "シウマイ", "横浜家系ラーメン", "三崎マグロ"] }
-    ]
-  },
-  "中部": {
-    color: "var(--region-chubu)",
-    prefs: [
-      { name: "新潟", keywords: ["佐渡島", "越後湯沢", "コシヒカリ", "村上牛", "へぎそば", "日本酒（越乃寒梅）", "燕三条", "朱鷺（トキ）"] },
-      { name: "富山", keywords: ["立山黒部アルペンルート", "富山湾の寒ブリ", "白エビ", "ホタルイカ", "五箇山合掌造り", "高岡大仏", "富山ブラックラーメン", "鱒の寿司"] },
-      { name: "石川", keywords: ["金沢兼六園", "ひがし茶屋街", "近江町市場", "加賀温泉", "輪島塗", "金箔", "治部煮", "のど黒", "能登牡蠣"] },
-      { name: "福井", keywords: ["東尋坊", "永平寺", "恐竜博物館", "越前ガニ", "鯖街道", "若狭湾", "敦賀", "羽二重餅"] },
-      { name: "山梨", keywords: ["富士山", "河口湖", "ほうとう", "シャインマスカット", "桃", "甲州ワイン", "昇仙峡", "身延山久遠寺"] },
-      { name: "長野", keywords: ["上高地", "松本城", "善光寺", "軽井沢", "地獄谷野猿公苑", "白馬", "信州そば", "野沢温泉", "おやき"] },
-      { name: "岐阜", keywords: ["白川郷合掌造り", "下呂温泉", "高山古い町並み", "岐阜城", "飛騨牛", "鮎", "長良川鵜飼", "五平餅"] },
-      { name: "静岡", keywords: ["富士山", "熱海温泉", "浜名湖うなぎ", "静岡おでん", "三島スカイウォーク", "伊豆下田", "わさび", "桜えび"] },
-      { name: "愛知", keywords: ["名古屋城", "熱田神宮", "味噌カツ", "手羽先", "ひつまぶし", "小倉トースト", "犬山城", "トヨタ産業技術記念館"] }
-    ]
-  },
-  "近畿": {
-    color: "var(--region-kinki)",
-    prefs: [
-      { name: "三重", keywords: ["伊勢神宮", "赤福", "伊勢えび", "的矢牡蠣", "鳥羽水族館", "熊野古道", "松阪牛", "てこね寿司"] },
-      { name: "滋賀", keywords: ["琵琶湖", "彦根城・ひこにゃん", "近江牛", "鮒ずし", "比叡山延暦寺", "竹生島", "近江ちゃんぽん", "長浜", "信楽焼"] },
-      { name: "京都", keywords: ["清水寺", "金閣寺", "嵐山・竹林", "伏見稲荷", "祇園", "哲学の道", "宇治抹茶", "湯豆腐", "西陣織", "京料理"] },
-      { name: "大阪", keywords: ["道頓堀", "たこ焼き", "お好み焼き", "ユニバーサルスタジオ", "大阪城", "黒門市場", "新世界串カツ", "551蓬莱"] },
-      { name: "兵庫", keywords: ["姫路城", "神戸三宮", "有馬温泉", "神戸ビーフ", "城崎温泉", "明石蛸", "淡路島玉ねぎ", "須磨海岸"] },
-      { name: "奈良", keywords: ["奈良公園・鹿", "東大寺大仏", "春日大社", "吉野山桜", "飛鳥", "法隆寺", "柿の葉寿司", "三輪そうめん"] },
-      { name: "和歌山", keywords: ["高野山", "熊野古道", "那智の滝", "白浜温泉", "アドベンチャーワールド", "紀伊勝浦まぐろ", "みかん", "梅干し"] }
-    ]
-  },
-  "中国": {
-    color: "var(--region-chugoku)",
-    prefs: [
-      { name: "鳥取", keywords: ["鳥取砂丘", "大山", "松葉ガニ", "二十世紀梨", "境港・ゲゲゲの鬼太郎", "白兎海岸", "とうふちくわ", "らっきょう"] },
-      { name: "島根", keywords: ["出雲大社", "足立美術館", "石見銀山", "宍道湖しじみ", "松江城", "隠岐島", "のどぐろ", "出雲そば"] },
-      { name: "岡山", keywords: ["後楽園", "倉敷美観地区", "マスカット", "桃", "ひるぜん焼きそば", "岡山城", "蒜山高原", "ままかり"] },
-      { name: "広島", keywords: ["厳島神社・宮島", "原爆ドーム", "お好み焼き（広島風）", "牡蠣", "もみじまんじゅう", "しまなみ海道", "三次", "広島レモン"] },
-      { name: "山口", keywords: ["錦帯橋", "秋吉台・秋芳洞", "下関ふぐ", "萩城下町", "角島大橋", "関門海峡", "瓦そば", "外郎"] }
-    ]
-  },
-  "四国": {
-    color: "var(--region-shikoku)",
-    prefs: [
-      { name: "徳島", keywords: ["阿波踊り", "大歩危・小歩危", "鳴門の渦潮", "祖谷のかずら橋", "すだち", "徳島ラーメン", "金長まんじゅう", "剣山"] },
-      { name: "香川", keywords: ["讃岐うどん", "金刀比羅宮", "直島アート", "栗林公園", "骨付鳥", "オリーブ", "高松城", "父母ヶ浜"] },
-      { name: "愛媛", keywords: ["道後温泉", "松山城", "しまなみ海道", "宇和島鯛めし", "みかん", "砥部焼", "内子町", "今治タオル"] },
-      { name: "高知", keywords: ["桂浜", "よさこい祭り", "カツオのたたき", "四万十川", "仁淀川", "土佐日記", "ひろめ市場", "室戸岬"] }
-    ]
-  },
-  "九州": {
-    color: "var(--region-kyushu)",
-    prefs: [
-      { name: "福岡", keywords: ["博多ラーメン", "もつ鍋", "屋台", "太宰府天満宮", "中洲", "明太子", "唐津", "天神"] },
-      { name: "佐賀", keywords: ["有田焼", "伊万里焼", "吉野ヶ里遺跡", "バルーンフェスタ", "呼子のイカ", "唐津城", "虹の松原", "佐賀牛"] },
-      { name: "長崎", keywords: ["ハウステンボス", "グラバー園", "長崎ちゃんぽん", "皿うどん", "眼鏡橋", "出島", "九十九島", "カステラ"] },
-      { name: "熊本", keywords: ["熊本城", "阿蘇山", "くまモン", "馬刺し", "辛子蓮根", "天草", "通潤橋", "太平燕"] },
-      { name: "大分", keywords: ["別府温泉・地獄めぐり", "由布院温泉", "関アジ・関サバ", "とり天", "臼杵石仏", "やせうま", "耶馬渓", "地獄蒸し"] },
-      { name: "宮崎", keywords: ["高千穂峡", "青島神社", "日南海岸", "地鶏炭火焼き", "チキン南蛮", "マンゴー", "日向夏", "鵜戸神宮"] },
-      { name: "鹿児島", keywords: ["桜島", "屋久島（縄文杉）", "薩摩焼酎", "黒豚", "さつまあげ", "知覧武家屋敷", "霧島温泉", "指宿砂蒸し温泉"] }
-    ]
-  },
-  "沖縄": {
-    color: "var(--region-okinawa)",
-    prefs: [
-      { name: "沖縄", keywords: ["首里城", "美ら海水族館", "慶良間諸島", "ゴーヤチャンプルー", "沖縄そば", "三線", "石垣島", "宮古島", "泡盛", "サンゴ礁シュノーケル"] }
-    ]
-  }
+  "北海道":{ color:"var(--region-hokkaido)", prefs:[
+    { name:"北海道", keywords:["函館夜景","小樽運河","富良野ラベンダー","知床","札幌ラーメン","ジンギスカン","カニ","スープカレー","雪まつり","流氷","洞爺湖","大雪山"] }
+  ]},
+  "東北":{ color:"var(--region-tohoku)", prefs:[
+    { name:"青森", keywords:["白神山地","ねぶた祭り","マグロ","りんご","三内丸山遺跡","奥入瀬渓流","八甲田山","ほたて"] },
+    { name:"岩手", keywords:["平泉・中尊寺","厳美渓","わんこそば","冷麺","南部鉄器","龍泉洞","遠野","前沢牛"] },
+    { name:"宮城", keywords:["松島","仙台七夕まつり","牛タン","ずんだ餅","気仙沼フカヒレ","秋保温泉","蔵王キツネ村","笹かまぼこ"] },
+    { name:"秋田", keywords:["竿燈まつり","なまはげ","秋田犬","きりたんぽ","稲庭うどん","田沢湖","角館武家屋敷","男鹿半島"] },
+    { name:"山形", keywords:["山寺（立石寺）","蔵王温泉・樹氷","さくらんぼ","芋煮","米沢牛","鶴岡・月山","花笠まつり","玉こんにゃく"] },
+    { name:"福島", keywords:["会津若松・鶴ヶ城","裏磐梯五色沼","喜多方ラーメン","福島桃","スパリゾートハワイアンズ","大内宿","白虎隊","赤べこ"] }
+  ]},
+  "関東":{ color:"var(--region-kanto)", prefs:[
+    { name:"茨城", keywords:["袋田の滝","偕楽園・梅","納豆","あんこう鍋","筑波山","大洗","笠間焼","霞ヶ浦"] },
+    { name:"栃木", keywords:["日光東照宮","那須高原","いちご狩り","宇都宮餃子","華厳の滝","鬼怒川温泉","益子焼","レモン牛乳"] },
+    { name:"群馬", keywords:["草津温泉","伊香保温泉","富岡製糸場","だるま","水澤うどん","谷川岳","上毛かるた","焼きまんじゅう"] },
+    { name:"埼玉", keywords:["秩父","川越小江戸","鉄道博物館","所沢航空発祥記念館","行田古墳","深谷ねぎ","川越いも","武蔵野うどん"] },
+    { name:"千葉", keywords:["成田山新勝寺","鋸山","九十九里浜","銚子","房総フラワーライン","ディズニーリゾート","落花生","なめろう"] },
+    { name:"東京", keywords:["浅草・浅草寺","渋谷スクランブル","新宿","上野","六本木","スカイツリー","原宿・竹下通り","豊洲市場","築地場外","お台場","秋葉原"] },
+    { name:"神奈川", keywords:["鎌倉・大仏","横浜中華街","箱根温泉","江ノ島","湘南海岸","みなとみらい","シウマイ","横浜家系ラーメン","三崎マグロ"] }
+  ]},
+  "中部":{ color:"var(--region-chubu)", prefs:[
+    { name:"新潟", keywords:["佐渡島","越後湯沢","コシヒカリ","村上牛","へぎそば","日本酒（越乃寒梅）","燕三条","朱鷺（トキ）"] },
+    { name:"富山", keywords:["立山黒部アルペンルート","富山湾の寒ブリ","白エビ","ホタルイカ","五箇山合掌造り","高岡大仏","富山ブラックラーメン","鱒の寿司"] },
+    { name:"石川", keywords:["金沢兼六園","ひがし茶屋街","近江町市場","加賀温泉","輪島塗","金箔","治部煮","のど黒","能登牡蠣"] },
+    { name:"福井", keywords:["東尋坊","永平寺","恐竜博物館","越前ガニ","鯖街道","若狭湾","敦賀","羽二重餅"] },
+    { name:"山梨", keywords:["富士山","河口湖","ほうとう","シャインマスカット","桃","甲州ワイン","昇仙峡","身延山久遠寺"] },
+    { name:"長野", keywords:["上高地","松本城","善光寺","軽井沢","地獄谷野猿公苑","白馬","信州そば","野沢温泉","おやき"] },
+    { name:"岐阜", keywords:["白川郷合掌造り","下呂温泉","高山古い町並み","岐阜城","飛騨牛","鮎","長良川鵜飼","五平餅"] },
+    { name:"静岡", keywords:["富士山","熱海温泉","浜名湖うなぎ","静岡おでん","三島スカイウォーク","伊豆下田","わさび","桜えび"] },
+    { name:"愛知", keywords:["名古屋城","熱田神宮","味噌カツ","手羽先","ひつまぶし","小倉トースト","犬山城","トヨタ産業技術記念館"] }
+  ]},
+  "近畿":{ color:"var(--region-kinki)", prefs:[
+    { name:"三重", keywords:["伊勢神宮","赤福","伊勢えび","的矢牡蠣","鳥羽水族館","熊野古道","松阪牛","てこね寿司"] },
+    { name:"滋賀", keywords:["琵琶湖","彦根城・ひこにゃん","近江牛","鮒ずし","比叡山延暦寺","竹生島","近江ちゃんぽん","長浜","信楽焼"] },
+    { name:"京都", keywords:["清水寺","金閣寺","嵐山・竹林","伏見稲荷","祇園","哲学の道","宇治抹茶","湯豆腐","西陣織","京料理"] },
+    { name:"大阪", keywords:["道頓堀","たこ焼き","お好み焼き","ユニバーサルスタジオ","大阪城","黒門市場","新世界串カツ","551蓬莱"] },
+    { name:"兵庫", keywords:["姫路城","神戸三宮","有馬温泉","神戸ビーフ","城崎温泉","明石蛸","淡路島玉ねぎ","須磨海岸"] },
+    { name:"奈良", keywords:["奈良公園・鹿","東大寺大仏","春日大社","吉野山桜","飛鳥","法隆寺","柿の葉寿司","三輪そうめん"] },
+    { name:"和歌山", keywords:["高野山","熊野古道","那智の滝","白浜温泉","アドベンチャーワールド","紀伊勝浦まぐろ","みかん","梅干し"] }
+  ]},
+  "中国":{ color:"var(--region-chugoku)", prefs:[
+    { name:"鳥取", keywords:["鳥取砂丘","大山","松葉ガニ","二十世紀梨","境港・ゲゲゲの鬼太郎","白兎海岸","とうふちくわ","らっきょう"] },
+    { name:"島根", keywords:["出雲大社","足立美術館","石見銀山","宍道湖しじみ","松江城","隠岐島","のどぐろ","出雲そば"] },
+    { name:"岡山", keywords:["後楽園","倉敷美観地区","マスカット","桃","ひるぜん焼きそば","岡山城","蒜山高原","ままかり"] },
+    { name:"広島", keywords:["厳島神社・宮島","原爆ドーム","お好み焼き（広島風）","牡蠣","もみじまんじゅう","しまなみ海道","三次","広島レモン"] },
+    { name:"山口", keywords:["錦帯橋","秋吉台・秋芳洞","下関ふぐ","萩城下町","角島大橋","関門海峡","瓦そば","外郎"] }
+  ]},
+  "四国":{ color:"var(--region-shikoku)", prefs:[
+    { name:"徳島", keywords:["阿波踊り","大歩危・小歩危","鳴門の渦潮","祖谷のかずら橋","すだち","徳島ラーメン","金長まんじゅう","剣山"] },
+    { name:"香川", keywords:["讃岐うどん","金刀比羅宮","直島アート","栗林公園","骨付鳥","オリーブ","高松城","父母ヶ浜"] },
+    { name:"愛媛", keywords:["道後温泉","松山城","しまなみ海道","宇和島鯛めし","みかん","砥部焼","内子町","今治タオル"] },
+    { name:"高知", keywords:["桂浜","よさこい祭り","カツオのたたき","四万十川","仁淀川","土佐日記","ひろめ市場","室戸岬"] }
+  ]},
+  "九州":{ color:"var(--region-kyushu)", prefs:[
+    { name:"福岡", keywords:["博多ラーメン","もつ鍋","屋台","太宰府天満宮","中洲","明太子","唐津","天神"] },
+    { name:"佐賀", keywords:["有田焼","伊万里焼","吉野ヶ里遺跡","バルーンフェスタ","呼子のイカ","唐津城","虹の松原","佐賀牛"] },
+    { name:"長崎", keywords:["ハウステンボス","グラバー園","長崎ちゃんぽん","皿うどん","眼鏡橋","出島","九十九島","カステラ"] },
+    { name:"熊本", keywords:["熊本城","阿蘇山","くまモン","馬刺し","辛子蓮根","天草","通潤橋","太平燕"] },
+    { name:"大分", keywords:["別府温泉・地獄めぐり","由布院温泉","関アジ・関サバ","とり天","臼杵石仏","やせうま","耶馬渓","地獄蒸し"] },
+    { name:"宮崎", keywords:["高千穂峡","青島神社","日南海岸","地鶏炭火焼き","チキン南蛮","マンゴー","日向夏","鵜戸神宮"] },
+    { name:"鹿児島", keywords:["桜島","屋久島（縄文杉）","薩摩焼酎","黒豚","さつまあげ","知覧武家屋敷","霧島温泉","指宿砂蒸し温泉"] }
+  ]},
+  "沖縄":{ color:"var(--region-okinawa)", prefs:[
+    { name:"沖縄", keywords:["首里城","美ら海水族館","慶良間諸島","ゴーヤチャンプルー","沖縄そば","三線","石垣島","宮古島","泡盛","サンゴ礁シュノーケル"] }
+  ]}
 };
 
-// ── STATE ──
+const svgMap    = `<svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
+const svgSearch = `<svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>`;
+const svgInsta  = `<svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`;
+
 let currentRegion = "all";
-let wishlist = []; // [{keyword, pref}]
 
-// ── MAP PIN SVG ──
-const mapPinSVG = `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
-
-// ── BUILD UI ──
 function buildUI() {
   const main = document.getElementById('main');
   main.innerHTML = '';
@@ -596,15 +451,20 @@ function buildUI() {
       kwContainer.className = 'keywords';
 
       for (const kw of pref.keywords) {
-        const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(kw + ' ' + pref.name)}`;
+        const mapsUrl   = `https://www.google.com/maps/search/${encodeURIComponent(kw + ' ' + pref.name)}`;
+        const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(kw + ' ' + pref.name)}`;
+        const tag       = kw.replace(/[・（）()　\s]/g, '');
+        const instaUrl  = `https://www.instagram.com/explore/tags/${encodeURIComponent(tag)}`;
+
         const kwEl = document.createElement('span');
         kwEl.className = 'keyword';
-        kwEl.innerHTML = `
-          <a class="kw-map" href="${mapsUrl}" target="_blank" rel="noopener" title="Google Mapsで確認">${mapPinSVG}${kw}</a>
-          <span class="kw-divider"></span>
-          <button class="kw-add" title="気になるリストに追加">＋</button>
-        `;
-        kwEl.querySelector('.kw-add').addEventListener('click', () => toggleWishlist(kw, pref.name));
+        kwEl.innerHTML = `${kw}<span class="kw-actions">
+          <a class="kw-action-btn" href="${mapsUrl}" target="_blank" rel="noopener">${svgMap}Maps</a>
+          <span class="kw-sep"></span>
+          <a class="kw-action-btn" href="${searchUrl}" target="_blank" rel="noopener">${svgSearch}検索</a>
+          <span class="kw-sep"></span>
+          <a class="kw-action-btn" href="${instaUrl}" target="_blank" rel="noopener">${svgInsta}Instagram</a>
+        </span>`;
         kwContainer.appendChild(kwEl);
       }
 
@@ -616,85 +476,17 @@ function buildUI() {
     section.appendChild(grid);
     main.appendChild(section);
   }
-
-  syncWishlistButtons();
 }
 
-// ── WISHLIST ──
-function toggleWishlist(kw, pref) {
-  const exists = wishlist.findIndex(w => w.keyword === kw && w.pref === pref);
-  if (exists >= 0) {
-    wishlist.splice(exists, 1);
-  } else {
-    wishlist.push({ keyword: kw, pref });
-  }
-  renderWishlist();
-  syncWishlistButtons();
-}
-
-function renderWishlist() {
-  const bar = document.getElementById('wishlistBar');
-  const items = document.getElementById('wishlistItems');
-  const actions = document.getElementById('wishlistActions');
-
-  if (wishlist.length === 0) {
-    bar.classList.add('empty');
-    items.innerHTML = '<span class="wishlist-empty-msg">キーワードの ＋ ボタンで追加できます</span>';
-    actions.style.display = 'none';
-    return;
-  }
-
-  bar.classList.remove('empty');
-  actions.style.display = 'flex';
-  items.innerHTML = wishlist.map((w, i) => `
-    <span class="wishlist-item">
-      <span style="color:var(--muted);font-size:0.65rem">${w.pref}</span>&nbsp;${w.keyword}
-      <button class="remove-btn" data-idx="${i}">×</button>
-    </span>
-  `).join('');
-  items.addEventListener('click', e => {
-    const btn = e.target.closest('.remove-btn');
-    if (btn) removeWishlist(Number(btn.dataset.idx));
-  }, { once: true });
-}
-
-function removeWishlist(i) {
-  wishlist.splice(i, 1);
-  renderWishlist();
-  syncWishlistButtons();
-}
-
-function clearWishlist() {
-  wishlist = [];
-  renderWishlist();
-  syncWishlistButtons();
-}
-
-function syncWishlistButtons() {
-  // pref + keyword の組み合わせで判定することで同名キーワード別県バグを防ぐ
-  document.querySelectorAll('.kw-add').forEach(btn => {
-    const kwText = btn.closest('.keyword')?.querySelector('.kw-map')?.textContent.trim();
-    const prefName = btn.closest('.prefecture-card')?.dataset.name;
-    const inList = wishlist.some(w => w.keyword === kwText && w.pref === prefName);
-    btn.classList.toggle('added', inList);
-    btn.textContent = inList ? '✓' : '＋';
-  });
-}
-
-// ── FILTER ──
 function filterCards() {
   const query = document.getElementById('search').value.trim().toLowerCase();
-  const cards = document.querySelectorAll('.prefecture-card');
-  const sections = document.querySelectorAll('.region-section');
-
-  cards.forEach(card => {
-    const nameMatch = card.dataset.name.includes(query);
-    const kwMatch = card.dataset.keywords.includes(query);
+  document.querySelectorAll('.prefecture-card').forEach(card => {
+    const nameMatch   = card.dataset.name.includes(query);
+    const kwMatch     = card.dataset.keywords.includes(query);
     const regionMatch = currentRegion === 'all' || card.dataset.region === currentRegion;
     card.classList.toggle('hidden', !(nameMatch || kwMatch) || !regionMatch);
   });
-
-  sections.forEach(section => {
+  document.querySelectorAll('.region-section').forEach(section => {
     const visible = [...section.querySelectorAll('.prefecture-card')].some(c => !c.classList.contains('hidden'));
     section.classList.toggle('hidden', !visible);
   });
