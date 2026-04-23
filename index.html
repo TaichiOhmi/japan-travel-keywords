@@ -203,18 +203,19 @@
     padding: 0.25rem 0.55rem;
     border: 1px solid var(--light);
     color: var(--muted);
-    cursor: default;
+    cursor: pointer;
     transition: border-color 0.15s, background 0.15s, color 0.15s;
     user-select: none;
   }
-  .keyword:hover {
+  .keyword:hover,
+  .keyword.active {
     border-color: var(--accent-color, var(--ink));
     color: var(--ink);
     background: white;
     z-index: 10;
   }
 
-  /* ホバーメニュー */
+  /* ホバー／タップメニュー */
   .kw-actions {
     position: absolute;
     bottom: calc(100% + 6px);
@@ -239,7 +240,8 @@
     border: 5px solid transparent;
     border-top-color: var(--ink);
   }
-  .keyword:hover .kw-actions {
+  .keyword:hover .kw-actions,
+  .keyword.active .kw-actions {
     opacity: 1;
     pointer-events: auto;
     transform: translateX(-50%) translateY(0);
@@ -465,6 +467,12 @@ function buildUI() {
           <span class="kw-sep"></span>
           <a class="kw-action-btn" href="${instaUrl}" target="_blank" rel="noopener">${svgInsta}Instagram</a>
         </span>`;
+        kwEl.addEventListener('click', e => {
+          e.stopPropagation();
+          const isActive = kwEl.classList.contains('active');
+          closeAllKeywords();
+          if (!isActive) kwEl.classList.add('active');
+        });
         kwContainer.appendChild(kwEl);
       }
 
@@ -476,6 +484,10 @@ function buildUI() {
     section.appendChild(grid);
     main.appendChild(section);
   }
+}
+
+function closeAllKeywords() {
+  document.querySelectorAll('.keyword.active').forEach(el => el.classList.remove('active'));
 }
 
 function filterCards() {
@@ -500,6 +512,9 @@ function filterRegion(region, btn) {
 }
 
 buildUI();
+
+document.addEventListener('click', closeAllKeywords);
+document.addEventListener('scroll', closeAllKeywords, { passive: true });
 </script>
 </body>
 </html>
